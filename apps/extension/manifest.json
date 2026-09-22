@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "subShare Connector",
+  "version": "0.1.0",
+  "description": "Securely sync and launch shared streaming sessions for subShare — no passwords, only encrypted session tokens.",
+  "permissions": ["cookies", "storage", "tabs"],
+  "host_permissions": [
+    "http://localhost:3000/*",
+    "http://localhost:4000/*",
+    "https://*.netflix.com/*",
+    "https://*.primevideo.com/*",
+    "https://*.hotstar.com/*",
+    "https://*.spotify.com/*",
+    "https://*.youtube.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "subShare Connector"
+  }
+}

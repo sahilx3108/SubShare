@@ -1,0 +1,14 @@
+{
+  "name": "@subshare/extension",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc && node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.280",
+    "typescript": "^5.6.3"
+  }
+}

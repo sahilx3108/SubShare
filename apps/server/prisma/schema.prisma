@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SlotStatus {
+  AVAILABLE
+  ACTIVE
+  EXPIRED
+
+  @@map("slot_status")
+}
+
+model User {
+  id              String   @id @default(cuid())
+  name            String
+  university_email String  @unique
+  password_hash   String
+  rating          Float    @default(0)
+  email_verified  Boolean  @default(false)
+  created_at      DateTime @default(now())
+
+  subscriptions     Subscription[]
+  purchased_slots   Slot[]           @relation("SlotBuyer")
+  payments          Payment[]
+  verification_tokens VerificationToken[]
+
+  @@map("users")
+}
+
+model VerificationToken {
+  id         String   @id @default(cuid())
+  token_hash String   @unique
+  user_id    String
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  expires_at DateTime
+  created_at DateTime @default(now())
+
+  @@index([user_id])
+  @@map("verification_tokens")
+}
+
+model Subscription {
+  id                     String   @id @default(cuid())
+  owner_id               String
+  owner                  User     @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  platform_name          String
+  total_slots_offered    Int
+  // Opaque blob produced by the owner's Chrome extension (AES-GCM ciphertext).
+  encrypted_session_data String?
+  // Symmetric key used by the extensions to encrypt/decrypt the blob.
+  session_key            String?
+  session_synced_at      DateTime?
+  created_at             DateTime @default(now())
+
+  slots Slot[]
+
+  @@index([owner_id])
+  @@map("subscriptions")
+}
+
+model Slot {
+  id                 String     @id @default(cuid())
+  subscription_id    String
+  subscription       Subscription @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
+  buyer_id           String?
+  buyer              User?      @relation("SlotBuyer", fields: [buyer_id], references: [id])
+  status             SlotStatus @default(AVAILABLE)
+  price_per_month    Float
+  expires_at         DateTime?
+  launch_requested_at DateTime?
+  created_at         DateTime   @default(now())
+  updated_at         DateTime   @updatedAt
+
+  payments Payment[]
+
+  @@index([status])
+  @@index([subscription_id])
+  @@index([buyer_id])
+  @@map("slots")
+}
+
+model Payment {
+  id                  String   @id @default(cuid())
+  slot_id             String
+  slot                Slot     @relation(fields: [slot_id], references: [id], onDelete: Cascade)
+  buyer_id            String
+  buyer               User     @relation(fields: [buyer_id], references: [id])
+  razorpay_order_id   String   @unique
+  razorpay_payment_id String?  @unique
+  amount              Float
+  platform_fee        Float
+  owner_payout        Float
+  // CREATED | CAPTURED | NEEDS_REFUND | FAILED
+  status              String   @default("CREATED")
+  created_at          DateTime @default(now())
+
+  @@index([slot_id])
+  @@index([buyer_id])
+  @@map("payments")
+}

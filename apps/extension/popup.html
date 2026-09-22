@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>subShare Connector</title>
+    <style>
+      :root { color-scheme: light; }
+      body {
+        width: 320px;
+        margin: 0;
+        font: 13px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+        color: #0f172a;
+      }
+      header {
+        display: flex; align-items: center; gap: 8px;
+        padding: 12px 14px; border-bottom: 1px solid #e2e8f0;
+        background: #eef2ff;
+      }
+      .logo {
+        width: 22px; height: 22px; border-radius: 6px;
+        background: #4f46e5; color: #fff; font-weight: 700;
+        display: grid; place-items: center; font-size: 12px;
+      }
+      h1 { font-size: 14px; margin: 0; }
+      main { padding: 12px 14px 14px; }
+      label { display: block; font-weight: 500; margin: 10px 0 4px; }
+      select, input[type="text"] {
+        width: 100%; box-sizing: border-box; padding: 7px 8px;
+        border: 1px solid #cbd5e1; border-radius: 8px; font: inherit;
+      }
+      button {
+        width: 100%; margin-top: 10px; padding: 9px 10px;
+        border: 0; border-radius: 8px; font: inherit; font-weight: 600;
+        background: #4f46e5; color: #fff; cursor: pointer;
+      }
+      button:hover { background: #4338ca; }
+      button.secondary { background: #fff; color: #0f172a; border: 1px solid #cbd5e1; }
+      button:disabled { opacity: .55; cursor: default; }
+      #status { margin-top: 10px; font-size: 12px; white-space: pre-wrap; word-break: break-word; }
+      #status.ok { color: #047857; }
+      #status.err { color: #b91c1c; }
+      details { margin-top: 12px; font-size: 12px; color: #475569; }
+      details input { margin-bottom: 6px; }
+      .hint { margin: 4px 0 0; font-size: 11px; color: #64748b; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <span class="logo">S</span>
+      <h1>subShare Connector</h1>
+      <span id="auth" style="margin-left:auto;font-size:11px;color:#64748b"></span>
+    </header>
+
+    <main>
+      <section>
+        <label for="subs">Share my session (owner)</label>
+        <select id="subs" disabled><option>Loading listings…</option></select>
+        <button id="push">Encrypt &amp; sync session</button>
+        <p class="hint">
+          Log into the platform first. Your password is never read — only its
+          session cookies, encrypted before upload.
+        </p>
+      </section>
+
+      <hr style="border:none;border-top:1px solid #e2e8f0;margin:14px 0" />
+
+      <section>
+        <label>Launch my slot (buyer)</label>
+        <p class="hint" style="margin-bottom:8px">
+          Click “Launch via Extension” on your My Slots page, then press Launch here.
+        </p>
+        <button id="launch">Launch latest request</button>
+      </section>
+
+      <div id="status" role="status"></div>
+
+      <details>
+        <summary>Settings</summary>
+        <label for="apiBase">API base URL</label>
+        <input type="text" id="apiBase" />
+        <label for="webOrigin">Web app origin (for login cookie)</label>
+        <input type="text" id="webOrigin" />
+        <button id="save" class="secondary">Save settings</button>
+      </details>
+    </main>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
