@@ -15,7 +15,7 @@ import * as authService from "./auth.service";
 function setAuthCookie(res: Response, token: string) {
   res.cookie(AUTH_COOKIE_NAME, token, {
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: env.isProd ? "none" : "lax",
     secure: env.isProd,
     maxAge: AUTH_COOKIE_MAX_AGE_SECONDS * 1000,
     path: "/",

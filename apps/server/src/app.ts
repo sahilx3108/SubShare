@@ -17,8 +17,18 @@ export function createApp(): express.Express {
   app.use(
     cors({
       origin(origin, cb) {
-        if (!origin || env.webOrigins.includes(origin)) return cb(null, true);
-        cb(new Error("Origin not allowed by CORS"));
+        if (!origin) return cb(null, true);
+        const normalized = origin.trim().replace(/\/$/, "");
+        const allowedOrigins = env.webOrigins.map((o) => o.replace(/\/$/, ""));
+        if (
+          allowedOrigins.includes(normalized) ||
+          normalized.startsWith("http://localhost:") ||
+          normalized.startsWith("http://127.0.0.1:") ||
+          normalized.endsWith(".vercel.app")
+        ) {
+          return cb(null, true);
+        }
+        cb(new Error(`Origin ${origin} not allowed by CORS`));
       },
       credentials: true,
     }),
